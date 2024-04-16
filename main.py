@@ -37,6 +37,17 @@ col = [
     'NU_ENDERECO',
     'CO_ENTIDADE'
 ]
+def verificar_area_externa(data):
+    df = pd.read_csv(data)
+    
+    # Verifica se alguma das colunas tem o valor 1
+    area_externa = df[['IN_QUADRA_ESPORTES', 'IN_PARQUE_INFANTIL', 'IN_PATIO_COBERTO', 'IN_PATIO_DESCOBERTO']].max(axis=1)
+    
+    # Cria a nova coluna 'IN_AREA_EXTERNA'
+    df['IN_AREA_EXTERNA'] = area_externa
+    df.drop(columns=['IN_QUADRA_ESPORTES', 'IN_PARQUE_INFANTIL', 'IN_PATIO_COBERTO', 'IN_PATIO_DESCOBERTO'], inplace=True)
+    df.to_csv('colunas_essenciais.csv', index=False)
+    return df
 def quantidade_nulos_colunas(df):
     #df = pd.read_csv(data)
     null_counts = df.isnull().sum()
@@ -58,6 +69,12 @@ def main():
     st.title("Visualizador de Dados")
     arquivo_path = "colunas_essenciais.csv"
     mostrar_cabecalho(arquivo_path)
+
+     # Verificar se alguma das colunas tem o valor 1 e criar a nova coluna 'IN_AREA_EXTERNA'
+    df_com_area_externa = verificar_area_externa(arquivo_path)
+    # Exibir o DataFrame resultante
+    st.write("DataFrame com a nova coluna 'IN_AREA_EXTERNA':")
+    st.write(df_com_area_externa)
 
 if __name__ == "__main__":
     main()
